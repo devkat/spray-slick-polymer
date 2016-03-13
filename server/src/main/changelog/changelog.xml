@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+    logicalFilePath="changelog.xml">
+
+  <changeSet id="1" author="BeCompany">
+    <createTable tableName="user">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="email" type="varchar">
+        <constraints nullable="false"/>
+      </column>
+      <column name="given_name" type="varchar">
+        <constraints nullable="false"/>
+      </column>
+      <column name="family_name" type="varchar">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <insert tableName="user">
+      <column name="email" value="nobby.nobbs@watch.am"/>
+      <column name="given_name" value="Nobby"/>
+      <column name="family_name" value="Nobbs"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>
