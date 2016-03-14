@@ -51,6 +51,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
+  <!-- build:js elements/common/FormValidation.js -->
+  <script src="elements/common/form-validation.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:js elements/common/mixins.js -->
+  <script src="elements/common/mixins.js"></script>
+  <!-- endbuild -->
+
   <!-- Because this project uses vulcanize this should be your only html import
        in this file. All other imports should go in elements.html -->
   <link rel="import" href="elements/elements.html">
@@ -118,18 +126,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
             <section data-route="home">
-              <paper-material elevation="1">
-                <my-greeting></my-greeting>
-
-                <p class="subhead">You now have:</p>
-                <my-list></my-list>
-
-                <p>Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-              </paper-material>
-
-              <paper-material elevation="1">
-                <p>This is another card.</p>
-              </paper-material>
 
               <paper-material elevation="1">
                 <h1 id="license">License</h1>
@@ -154,18 +150,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="users">
               <paper-material elevation="1">
                 <h2 class="page-title">Users</h2>
-                <p>This is the users section</p>
-                <a href$="{{baseUrl}}users/Addy">Addy</a><br>
-                <a href$="{{baseUrl}}users/Rob">Rob</a><br>
-                <a href$="{{baseUrl}}users/Chuck">Chuck</a><br>
-                <a href$="{{baseUrl}}users/Sam">Sam</a>
+                <user-list id="userList"></user-list>
               </paper-material>
             </section>
 
-            <section data-route="user-info">
+            <section data-route="users-create">
               <paper-material elevation="1">
-                <h2 class="page-title">User: {{params.name}}</h2>
-                <div>This is {{params.name}}'s section</div>
+                <h2 class="page-title">Add User</h2>
+                <user-form></user-form>
+              </paper-material>
+            </section>
+
+            <section data-route="users-edit">
+              <paper-material elevation="1">
+                <h2 class="page-title">User Details</h2>
+                <user-form id="editUserForm"></user-form>
               </paper-material>
             </section>
 

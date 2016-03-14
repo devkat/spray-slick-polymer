@@ -25,6 +25,7 @@ var packageJson = require('./package.json');
 var crypto = require('crypto');
 var ensureFiles = require('./tasks/ensure-files.js');
 var proxyMiddleware = require('http-proxy-middleware');
+var typescript = require('gulp-typescript');
 
 // var ghPages = require('gulp-gh-pages');
 
@@ -122,6 +123,18 @@ gulp.task('images', function() {
   return imageOptimizeTask('app/images/**/*', dist('images'));
 });
 
+// Compile typescript files
+gulp.task('typescript', function() {
+  return gulp.src('app/elements/**/*.ts')
+    .pipe(typescript({
+      target: "es5",
+      experimentalDecorators: true,
+      noImplicitAny: true
+    }))
+    .pipe(gulp.dest('.tmp/elements'))
+    .pipe(gulp.dest(dist('elements')));
+});
+
 // Copy all files at the root level (app)
 gulp.task('copy', function() {
   var app = gulp.src([
@@ -216,7 +229,7 @@ gulp.task('clean', function() {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['styles', 'elements'], function() {
+gulp.task('serve', ['styles', 'elements', 'typescript'], function() {
   var proxy = proxyMiddleware('/api', { target: 'http://localhost:8080' });
 
   browserSync({
@@ -245,6 +258,7 @@ gulp.task('serve', ['styles', 'elements'], function() {
   gulp.watch(['app/styles/**/*.css'], ['styles', reload]);
   gulp.watch(['app/elements/**/*.css'], ['elements', reload]);
   gulp.watch(['app/images/**/*'], reload);
+  gulp.watch(['app/elements/**/*.ts'], ['typescript', reload]);
 });
 
 // Build and serve the output from the dist build
@@ -274,7 +288,7 @@ gulp.task('serve:dist', ['default'], function() {
 gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
-    ['ensureFiles', 'copy', 'styles'],
+    ['ensureFiles', 'copy', 'styles', 'typescript'],
     'elements',
     ['images', 'fonts', 'html'],
     'vulcanize', // 'cache-config',

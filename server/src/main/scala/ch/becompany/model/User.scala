@@ -14,7 +14,17 @@ case class User(
 object UserValidator extends Validator[User] {
   import ch.becompany.validation.CoreRules._
 
-  val rules: Map[Option[String], Seq[ValidationRule[User]]] =
-    Map(Some("email") -> Seq(((user: User) => notBlank(user.email), "Please enter an email address.")))
+  val rules: Map[String, Seq[ValidationRule[User]]] =
+    Map(
+      "email" -> Seq(
+        ((user: User) => notBlank(user.email), "Please enter an e-mail address."),
+        ((user: User) => email(user.email), "Please enter a valid e-mail address.")),
+      "givenName" -> Seq(
+        ((user: User) => notBlank(user.givenName), "Please enter a given name.")
+      ),
+      "familyName" -> Seq(
+        ((user: User) => notBlank(user.familyName), "Please enter a family name.")
+      )
+    )
 
 }

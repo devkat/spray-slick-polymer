@@ -34,6 +34,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
     console.log('Our app is ready to rock!');
+
+    [].forEach.call(document.querySelectorAll("user-form"), function(form) {
+      form.addEventListener('change', function(event) {
+        if (event.target === form) {
+          app.$.userList.$.ajax.generateRequest();
+          page.redirect("/users");
+        }
+      });
+    });
+
   });
 
   // See https://github.com/Polymer/polymer/issues/1381
