@@ -1,7 +1,6 @@
 /// <reference path="../../bower_components/polymer-ts/polymer-ts.d.ts" />
 /// <reference path="user.ts" />
 /// <reference path="../common/form-validation.ts" />
-/// <reference path="../common/mixins.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -40,7 +39,7 @@ var UserForm = (function (_super) {
         form.addEventListener('iron-form-response', function () { return _this.fire('change'); });
         form.addEventListener('iron-form-error', function (event) { return _this.handleError(event.detail.request.xhr.response); });
     };
-    UserForm.prototype.submitHandler = function (event) {
+    UserForm.prototype.submitHandler = function () {
         this._form().submit();
     };
     __decorate([
@@ -48,9 +47,9 @@ var UserForm = (function (_super) {
     ], UserForm.prototype, "userId", void 0);
     UserForm = __decorate([
         /// <reference path="../../bower_components/polymer-ts/polymer-ts.d.ts" />
-        component("user-form")
+        component("user-form"),
+        behavior(FormValidation)
     ], UserForm);
     return UserForm;
 }(polymer.Base));
-applyMixins(UserForm, [FormValidation]);
 UserForm.register();

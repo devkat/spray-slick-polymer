@@ -1,3 +1,5 @@
+/// <reference path="../../bower_components/polymer-ts/polymer-ts.d.ts" />
+
 interface ValidationResult {
   [key: string]: string[];
 }
@@ -7,7 +9,7 @@ interface PaperInput extends HTMLElement {
   invalid: boolean;
 }
 
-class FormValidation extends HTMLFormElement {
+class FormValidation extends polymer.Base {
 
   handleError(result: ValidationResult): void {
     [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) => {

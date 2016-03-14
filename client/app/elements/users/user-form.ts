@@ -1,10 +1,10 @@
 /// <reference path="../../bower_components/polymer-ts/polymer-ts.d.ts" />
 /// <reference path="user.ts" />
 /// <reference path="../common/form-validation.ts" />
-/// <reference path="../common/mixins.ts" />
 
 @component("user-form")
-class UserForm extends polymer.Base implements FormValidation {
+@behavior(FormValidation)
+class UserForm extends polymer.Base {
 
   user: User;
 
@@ -39,13 +39,11 @@ class UserForm extends polymer.Base implements FormValidation {
       (event) => this.handleError(event.detail.request.xhr.response));
   }
 
-  submitHandler(event): void {
+  submitHandler(): void {
     this._form().submit();
   }
 
-  handleError: (ValidationResult) => void;
+  handleError: (result:ValidationResult) => void;
 }
-
-applyMixins(UserForm, [ FormValidation ]);
 
 UserForm.register();

@@ -4,6 +4,7 @@ import akka.actor.{ActorContext, Actor}
 import ch.becompany.db.Users
 import ch.becompany.model.{UserValidator, User}
 import ch.becompany.json.UserJsonProtocol
+import spray.http.StatusCodes
 import spray.routing._
 
 import scala.concurrent.ExecutionContext
@@ -42,7 +43,7 @@ trait UserService extends HttpService with ValidationDirectives {
         } ~
         post {
           validateUser { user =>
-            complete(Users.add(user) map (id => user.copy(id = Some(id))))
+            complete(StatusCodes.Created, Users.add(user) map (id => user.copy(id = Some(id))))
           }
         }
       } ~
