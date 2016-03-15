@@ -1,7 +1,9 @@
 <link rel="import" href="../../bower_components/polymer-ts/polymer-ts.html">
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../common/form-validation.html">
+<link rel="import" href="../common/loader-overlay.html">
 
 <dom-module id="user-form">
   <template>
@@ -9,19 +11,30 @@
       .submit-buttons {
         margin-top: 2rem;
       }
+      #userForm {
+        position: relative;
+      }
+      loader-overlay {
+        background: none;
+      }
     </style>
 
-    <iron-ajax id="ajax" url="/api/users/[[userId]]" last-response="{{user}}"></iron-ajax>
+    <iron-ajax id="userDetailsService" url="/api/users/[[userId]]" last-response="{{user}}"></iron-ajax>
+    <iron-ajax id="userValidationService" url="/api/users/validate"></iron-ajax>
 
+    <p>* Required elements</p>
     <form is="iron-form" id="userForm" method="post" action="/api/users">
-      <paper-input class="control" name="email" label="E-mail" value="[[user.email]]"></paper-input>
-      <paper-input class="control" name="givenName" label="Given name" value="[[user.givenName]]"></paper-input>
-      <paper-input class="control" name="familyName" label="Family name" value="[[user.familyName]]"></paper-input>
+      <paper-input class="control" name="email" label="E-mail *" value="[[user.email]]"></paper-input>
+      <paper-input class="control" name="givenName" label="Given name *" value="[[user.givenName]]"></paper-input>
+      <paper-input class="control" name="familyName" label="Family name *" value="[[user.familyName]]"></paper-input>
       <div class="submit-buttons">
-        <paper-button raised on-click="submitHandler">Submit</paper-button>
+        <paper-button raised on-click="submitHandler" disabled="[[!valid]]">Submit</paper-button>
       </div>
     </form>
 
+    <loader-overlay id="loader" with-backdrop>
+      <paper-spinner active></paper-spinner>
+    </loader-overlay>
   </template>
   <script src="user-form.js"></script>
 </dom-module>

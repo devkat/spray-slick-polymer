@@ -22,13 +22,18 @@ trait ValidationDirectives extends Directives {
   import spray.httpx.SprayJsonSupport._
   import JsValueJsonProtocol._
 
+  private def provideResult[T](t: T, result: ValidationResult): Directive1[T] =
+    if (result.isEmpty) provide(t)
+    else reject(ValidateRejection(result))
+
   def validateEntity[T:Validator](d: Directive1[T]): Directive1[T] =
     d flatMap {
       case t =>
         val validator = implicitly[Validator[T]]
-        val result = validator.validate(t)
-        if (result.isEmpty) provide(t)
-        else reject(ValidateRejection(result))
+        optionalHeaderValueByName("Validate-Attributes") flatMap {
+          case Some(attr) => provideResult(t, validator.validate(t, attr))
+          case None => provideResult(t, validator.validate(t))
+        }
     }
 
   implicit def validateRejectionHandler = RejectionHandler {

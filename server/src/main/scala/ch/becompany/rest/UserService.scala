@@ -47,6 +47,11 @@ trait UserService extends HttpService with ValidationDirectives {
           }
         }
       } ~
+      path("users" / "validate") {
+        post {
+          validateUser { _ => complete(StatusCodes.OK) }
+        }
+      } ~
       path("users" / LongNumber) { id =>
         rejectEmptyResponse {
           get {

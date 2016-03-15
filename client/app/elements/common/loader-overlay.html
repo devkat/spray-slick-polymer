@@ -1,0 +1,29 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-overlay-behavior/iron-overlay-behavior.html">
+
+<dom-module id="loader-overlay">
+
+  <style>
+    :host {
+      background: white;
+      color: black;
+      padding: 24px;
+    }
+  </style>
+
+  <template>
+    <content></content>
+  </template>
+
+</dom-module>
+
+<script>
+  (function() {
+    Polymer({
+      is: 'loader-overlay',
+      behaviors: [
+        Polymer.IronOverlayBehavior
+      ]
+    });
+  })();
+</script>

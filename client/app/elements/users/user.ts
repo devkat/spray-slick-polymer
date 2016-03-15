@@ -1,5 +1,5 @@
 class User {
-  id: string;
+  id: number;
   email: string;
   givenName: string;
   familyName: string;

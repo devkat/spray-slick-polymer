@@ -16,12 +16,19 @@ var UserForm = (function (_super) {
     __extends(UserForm, _super);
     function UserForm() {
         _super.apply(this, arguments);
+        this.user = null;
     }
     UserForm.prototype._form = function () {
         return this.$.userForm;
     };
-    UserForm.prototype._loadUser = function () {
-        this.$.ajax.generateRequest();
+    UserForm.prototype._userChanged = function () {
+        this.$.loader.close();
+    };
+    UserForm.prototype._userIdChanged = function () {
+        var _this = this;
+        this._form().reset();
+        this.$.loader.open();
+        setTimeout(function () { return _this.$.userDetailsService.generateRequest(); }, 1000);
     };
     UserForm.prototype.ready = function () {
         var _this = this;
@@ -36,15 +43,28 @@ var UserForm = (function (_super) {
             this.request.headers['Content-Type'] = 'application/json';
             this.request.body = form.serialize();
         });
-        form.addEventListener('iron-form-response', function () { return _this.fire('change'); });
-        form.addEventListener('iron-form-error', function (event) { return _this.handleError(event.detail.request.xhr.response); });
+        form.addEventListener('iron-form-response', function () {
+            return _this.fire('change');
+        });
+        this.$.loader.autoFitOnAttach = true;
+        this.$.loader.fitInto = form;
+        this.$.loader.addEventListener('iron-overlay-opened', function () {
+            return form.appendChild(_this.$.loader.backdropElement);
+        });
+        this.validationService = this.$.userValidationService;
     };
     UserForm.prototype.submitHandler = function () {
         this._form().submit();
     };
     __decorate([
-        property({ name: "user-id", observer: "_loadUser" })
+        property({ name: "user-id", observer: "_userChanged" })
+    ], UserForm.prototype, "user", void 0);
+    __decorate([
+        property({ name: "user-id", observer: "_userIdChanged" })
     ], UserForm.prototype, "userId", void 0);
+    __decorate([
+        property({ name: "validation-service", type: "String" })
+    ], UserForm.prototype, "validationService", void 0);
     UserForm = __decorate([
         /// <reference path="../../bower_components/polymer-ts/polymer-ts.d.ts" />
         component("user-form"),
