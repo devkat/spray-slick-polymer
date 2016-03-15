@@ -6,8 +6,10 @@
 @behavior(FormValidation)
 class UserForm extends polymer.Base implements FormValidation {
 
+  private _emptyUser: User = { id: 0, email: "", givenName: "", familyName: "" };
+
   @property({ name: "user-id", observer: "_userChanged" })
-  user: User = null;
+  user: User;
 
   @property({ name: "user-id", observer: "_userIdChanged" })
   userId: number;
@@ -21,10 +23,13 @@ class UserForm extends polymer.Base implements FormValidation {
   }
 
   _userIdChanged(): void {
+    //this.user = this._emptyUser;
     this._form().reset();
+    [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) =>
+      elem.invalid = false
+    );
     this.$.loader.open();
-    setTimeout(() => this.$.userDetailsService.generateRequest(), 1000);
-
+    setTimeout(() => this.$.userDetailsService.generateRequest(), 0);
   }
 
   ready(): void {
@@ -58,8 +63,14 @@ class UserForm extends polymer.Base implements FormValidation {
   // FormValidation behavior
   @property({ name: "validation-service", type: "String" })
   validationService: any;
-
   handleValidation: (result: ValidationResult) => void;
+  serialize(): Object {
+    let json = this.querySelector('form').serialize();
+    if (this.user) {
+      json.id = this.user.id;
+    }
+    return json;
+  }
 
 }
 

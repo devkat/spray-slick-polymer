@@ -15,7 +15,6 @@ var FormValidation = (function (_super) {
     __extends(FormValidation, _super);
     function FormValidation() {
         _super.apply(this, arguments);
-        this.valid = false;
     }
     FormValidation.prototype.validationServiceChanged = function () {
         var _this = this;
@@ -25,7 +24,7 @@ var FormValidation = (function (_super) {
             return _this.handleValidationSuccess();
         });
         this.validationService.addEventListener('error', function (event) {
-            return _this.handleValidationError(event);
+            return _this.handleValidationError(event, false);
         });
     };
     FormValidation.prototype.ready = function () {
@@ -33,7 +32,7 @@ var FormValidation = (function (_super) {
         // Register callback for form submission errors
         var form = this.querySelector('form');
         form.addEventListener('iron-form-error', function (event) {
-            return _this.handleValidationError(event);
+            return _this.handleValidationError(event, true);
         });
         // Listen for changes in form controls
         [].forEach.call(this.querySelectorAll('.control'), function (elem) {
@@ -42,38 +41,40 @@ var FormValidation = (function (_super) {
             });
         });
     };
+    FormValidation.prototype.serialize = function () {
+        return null;
+    };
     FormValidation.prototype.validate = function (control) {
         var name = control.name;
         var value = control.value;
-        //this.validationService.headers = { 'Validate-Attributes': name };
-        var body = this.querySelector('form').serialize();
-        // Undefined values are missing from JSON
-        [].forEach.call(this.querySelectorAll('.control'), function (elem) {
-            if (!body[elem.name])
-                body[elem.name] = "";
-        });
-        this.validationService.body = body;
+        this.validationService.body = this.serialize();
         this.validationService.generateRequest();
     };
     FormValidation.prototype.handleValidationSuccess = function () {
         [].forEach.call(this.querySelectorAll('.control'), function (elem) {
+            elem.errorMessage = null;
             elem.invalid = false;
         });
-        this.valid = true;
     };
-    FormValidation.prototype.handleValidationError = function (event) {
+    /**
+     * Handles a validation error response.
+     *
+     * @param event The error event.
+     * @param partial Whether the form was submitted.
+     */
+    FormValidation.prototype.handleValidationError = function (event, submitted) {
         var xhr = event.detail.request.xhr;
         if (xhr.status === 400) {
-            this.showValidation(xhr.response);
+            this.showValidation(xhr.response, submitted);
         }
         else {
             console.log("Validation request error", xhr);
         }
     };
-    FormValidation.prototype.showValidation = function (result) {
+    FormValidation.prototype.showValidation = function (result, submitted) {
         [].forEach.call(this.querySelectorAll('.control'), function (elem) {
             // Don't show validation if field wasn't filled in yet
-            if (elem.value !== undefined) {
+            if (submitted || elem.value !== undefined) {
                 var errors = result[elem.name];
                 if (errors) {
                     elem.errorMessage = errors[0];
@@ -85,13 +86,9 @@ var FormValidation = (function (_super) {
                 }
             }
         });
-        this.valid = Object.keys(result).length === 0;
     };
     __decorate([
         property({ name: "validationService", observer: "validationServiceChanged" })
     ], FormValidation.prototype, "validationService", void 0);
-    __decorate([
-        property({ name: "valid", type: Boolean, value: false, notify: true })
-    ], FormValidation.prototype, "valid", void 0);
     return FormValidation;
 }(polymer.Base));

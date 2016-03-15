@@ -10,16 +10,13 @@ class FormValidation extends polymer.Base {
   @property({ name: "validationService", observer: "validationServiceChanged" })
   validationService: any;
 
-  @property({ name: "valid", type: Boolean, value: false, notify: true })
-  valid: boolean = false;
-
   validationServiceChanged(): void {
     this.validationService.method = "POST";
     this.validationService.contentType = "application/json";
     this.validationService.addEventListener('response', (event: Event) =>
       this.handleValidationSuccess());
     this.validationService.addEventListener('error', (event: Event) =>
-      this.handleValidationError(event));
+      this.handleValidationError(event, false));
   }
 
   ready(): void {
@@ -27,7 +24,7 @@ class FormValidation extends polymer.Base {
     // Register callback for form submission errors
     let form = this.querySelector('form');
     form.addEventListener('iron-form-error', (event: Event) =>
-      this.handleValidationError(event));
+      this.handleValidationError(event, true));
 
     // Listen for changes in form controls
     [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) =>
@@ -37,42 +34,44 @@ class FormValidation extends polymer.Base {
 
   }
 
+  serialize(): Object {
+    return null;
+  }
+
   validate(control: PaperInput): void {
     let name = control.name;
     let value = control.value;
 
-    //this.validationService.headers = { 'Validate-Attributes': name };
-    let body = this.querySelector('form').serialize();
-
-    // Undefined values are missing from JSON
-    [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) => {
-      if (!body[elem.name]) body[elem.name] = "";
-    });
-
-    this.validationService.body = body;
+    this.validationService.body = this.serialize();
     this.validationService.generateRequest();
   }
 
   handleValidationSuccess(): void {
     [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) => {
+      elem.errorMessage = null;
       elem.invalid = false;
     });
-    this.valid = true;
   }
 
-  handleValidationError(event: Event): void {
+  /**
+   * Handles a validation error response.
+   *
+   * @param event The error event.
+   * @param partial Whether the form was submitted.
+   */
+  handleValidationError(event: Event, submitted: boolean): void {
     let xhr = event.detail.request.xhr;
     if (xhr.status === 400) {
-      this.showValidation(xhr.response)
+      this.showValidation(xhr.response, submitted);
     } else {
       console.log("Validation request error", xhr);
     }
   }
 
-  showValidation(result: ValidationResult): void {
+  showValidation(result: ValidationResult, submitted: boolean): void {
     [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) => {
       // Don't show validation if field wasn't filled in yet
-      if (elem.value !== undefined) {
+      if (submitted || elem.value !== undefined) {
         let errors: string[] = result[elem.name];
         if (errors) {
           elem.errorMessage = errors[0];
@@ -83,7 +82,6 @@ class FormValidation extends polymer.Base {
         }
       }
     });
-    this.valid = Object.keys(result).length === 0;
   }
 
 }

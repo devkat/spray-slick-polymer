@@ -16,7 +16,7 @@ var UserForm = (function (_super) {
     __extends(UserForm, _super);
     function UserForm() {
         _super.apply(this, arguments);
-        this.user = null;
+        this._emptyUser = { id: 0, email: "", givenName: "", familyName: "" };
     }
     UserForm.prototype._form = function () {
         return this.$.userForm;
@@ -26,9 +26,13 @@ var UserForm = (function (_super) {
     };
     UserForm.prototype._userIdChanged = function () {
         var _this = this;
+        //this.user = this._emptyUser;
         this._form().reset();
+        [].forEach.call(this.querySelectorAll('.control'), function (elem) {
+            return elem.invalid = false;
+        });
         this.$.loader.open();
-        setTimeout(function () { return _this.$.userDetailsService.generateRequest(); }, 1000);
+        setTimeout(function () { return _this.$.userDetailsService.generateRequest(); }, 0);
     };
     UserForm.prototype.ready = function () {
         var _this = this;
@@ -55,6 +59,13 @@ var UserForm = (function (_super) {
     };
     UserForm.prototype.submitHandler = function () {
         this._form().submit();
+    };
+    UserForm.prototype.serialize = function () {
+        var json = this.querySelector('form').serialize();
+        if (this.user) {
+            json.id = this.user.id;
+        }
+        return json;
     };
     __decorate([
         property({ name: "user-id", observer: "_userChanged" })

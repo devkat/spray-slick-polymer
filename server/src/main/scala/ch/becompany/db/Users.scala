@@ -17,6 +17,10 @@ object Users {
     db.run(UserDao.filter(_.id === id).result.headOption map (_ map toUser))
   }
 
+  def findByEmail(email: String)(implicit ex: ExecutionContext): Future[Option[User]] = {
+    db.run(UserDao.filter(_.email === email).result.headOption map (_ map toUser))
+  }
+
   def list()(implicit ex: ExecutionContext): Future[Seq[User]] = {
     db.run(UserDao.result) map (_ map toUser)
   }

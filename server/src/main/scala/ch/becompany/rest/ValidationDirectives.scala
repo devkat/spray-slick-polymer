@@ -8,6 +8,9 @@ import spray.json.{DefaultJsonProtocol, JsValue, RootJsonFormat}
 import spray.routing._
 import spray.json._
 
+import scala.concurrent.ExecutionContext
+import scala.util.{Success, Failure}
+
 object JsValueJsonProtocol extends DefaultJsonProtocol {
   implicit val jsValueFormat = new RootJsonFormat[JsValue] {
     def write(value: JsValue) = value
@@ -22,17 +25,16 @@ trait ValidationDirectives extends Directives {
   import spray.httpx.SprayJsonSupport._
   import JsValueJsonProtocol._
 
-  private def provideResult[T](t: T, result: ValidationResult): Directive1[T] =
-    if (result.isEmpty) provide(t)
-    else reject(ValidateRejection(result))
-
-  def validateEntity[T:Validator](d: Directive1[T]): Directive1[T] =
+  def validateEntity[T:Validator](d: Directive1[T])(implicit ec: ExecutionContext): Directive1[T] =
     d flatMap {
       case t =>
         val validator = implicitly[Validator[T]]
-        optionalHeaderValueByName("Validate-Attributes") flatMap {
-          case Some(attr) => provideResult(t, validator.validate(t, attr))
-          case None => provideResult(t, validator.validate(t))
+        onComplete(validator.validate(t)) flatMap {
+          case Success(result) =>
+            if (result.isEmpty) provide(t)
+            else reject(ValidateRejection(result))
+          case Failure(ex) => complete(StatusCodes.InternalServerError,
+            s"An error occurred: ${ex.getMessage}")
         }
     }
 
