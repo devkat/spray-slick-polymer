@@ -34,7 +34,9 @@ trait Validator[T] {
         }
       }
 
+  def notEmpty(pair: (String, Seq[String])): Boolean = !pair._2.isEmpty
+
   def validate(t: T)(implicit ec: ExecutionContext): Future[ValidationResult] =
-    Future.sequence(rules.map(validateAttrRules(t))).map(_.toMap)
+    Future.sequence(rules.map(validateAttrRules(t))).map(_.filter(notEmpty).toMap)
 
 }

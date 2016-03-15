@@ -42,7 +42,7 @@ class UserForm extends polymer.Base implements FormValidation {
         this.request.url = `/api/users/${userId}`;
       }
       this.request.headers['Content-Type'] = 'application/json';
-      this.request.body = form.serialize();
+      this.request.body = component.serialize();
     });
 
     form.addEventListener('iron-form-response', () =>
