@@ -1,6 +1,6 @@
 package ch.becompany.validation
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object CoreRules {
 
