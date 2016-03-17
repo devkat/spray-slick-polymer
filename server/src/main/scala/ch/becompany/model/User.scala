@@ -23,20 +23,18 @@ object UserValidator extends Validator[User] {
       case (Some(id), Some(u)) => id == u.id.get
     }}
 
-  def rules(implicit ec: ExecutionContext) = {
-    user => Map(
-      "email" -> Seq(
-        notBlank(user.email) ~ "Please enter an e-mail address.",
-        email(user.email) ~ "Please enter a valid e-mail address.",
-        newOrSameEmail(user) ~ "This e-mail address is already registered."
-      ),
-      "givenName" -> Seq(
-        notBlank(user.givenName) ~ "Please enter a given name."
-      ),
-      "familyName" -> Seq(
-        notBlank(user.familyName) ~ "Please enter a family name."
-      )
+  def rules(user: User)(implicit ec: ExecutionContext) = Map(
+    "email" -> Seq(
+      notBlank(user.email) ~ "Please enter an e-mail address.",
+      email(user.email) ~ "Please enter a valid e-mail address.",
+      newOrSameEmail(user) ~ "This e-mail address is already registered."
+    ),
+    "givenName" -> Seq(
+      notBlank(user.givenName) ~ "Please enter a given name."
+    ),
+    "familyName" -> Seq(
+      notBlank(user.familyName) ~ "Please enter a family name."
     )
-  }
+  )
 
 }

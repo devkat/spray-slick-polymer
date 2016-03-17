@@ -28,10 +28,11 @@ trait Validator[T] {
 
   /**
     * Validation rules.
+    * @param t The object to validate.
     * @param ec The execution context.
-    * @return A function from T to a map from attributes to sets of validation results.
+    * @return A map from attributes to sets of validation results.
     */
-  def rules(implicit ec: ExecutionContext): T => Map[String, Seq[RuleResult]]
+  def rules(t: T)(implicit ec: ExecutionContext): Map[String, Seq[RuleResult]]
 
   /**
     * Validate an object.
@@ -40,7 +41,7 @@ trait Validator[T] {
     * @return A future validation result.
     */
   def validate(t: T)(implicit ec: ExecutionContext): Future[ValidationResult] = {
-    val results = rules(ec)(t).toSeq.map { case (attr, ruleResults) =>
+    val results = rules(t).toSeq.map { case (attr, ruleResults) =>
       Future.sequence(ruleResults.map(_.evaluate)).map(results => (attr, results.flatten))
     }
     Future.sequence(results).map(_.filter(!_._2.isEmpty).toMap)
