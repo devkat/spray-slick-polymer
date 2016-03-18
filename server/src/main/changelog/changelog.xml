@@ -9,6 +9,12 @@
     logicalFilePath="changelog.xml">
 
   <changeSet id="1" author="BeCompany">
+    <createTable tableName="role">
+      <column name="id" type="varchar">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+    </createTable>
+
     <createTable tableName="user">
       <column name="id" type="bigint" autoIncrement="true">
         <constraints nullable="false" primaryKey="true"/>
@@ -22,13 +28,58 @@
       <column name="family_name" type="varchar">
         <constraints nullable="false"/>
       </column>
+      <column name="role" type="varchar">
+        <constraints nullable="false"
+                     referencedTableName="role"
+                     referencedColumnNames="id"
+                     foreignKeyName="fk_user__role"/>
+      </column>
     </createTable>
+
+    <insert tableName="role">
+      <column name="id" value="corporal"/>
+    </insert>
+    <insert tableName="role">
+      <column name="id" value="sergeant"/>
+    </insert>
+    <insert tableName="role">
+      <column name="id" value="captain"/>
+    </insert>
+    <insert tableName="role">
+      <column name="id" value="commander"/>
+    </insert>
 
     <insert tableName="user">
       <column name="email" value="nobby.nobbs@watch.am"/>
       <column name="given_name" value="Nobby"/>
       <column name="family_name" value="Nobbs"/>
+      <column name="role" value="corporal"/>
     </insert>
+    <insert tableName="user">
+      <column name="email" value="fred.colon@watch.am"/>
+      <column name="given_name" value="Fred"/>
+      <column name="family_name" value="Colon"/>
+      <column name="role" value="sergeant"/>
+    </insert>
+    <insert tableName="user">
+      <column name="email" value="carrot@watch.am"/>
+      <column name="given_name" value="Carrot"/>
+      <column name="family_name" value="Ironfoundersson"/>
+      <column name="role" value="captain"/>
+    </insert>
+    <insert tableName="user">
+      <column name="email" value="sam.vimes@watch.am"/>
+      <column name="given_name" value="Samuel"/>
+      <column name="family_name" value="Vimes"/>
+      <column name="role" value="commander"/>
+    </insert>
+    <insert tableName="user">
+      <column name="email" value="angua@watch.am"/>
+      <column name="given_name" value="Angua"/>
+      <column name="family_name" value="von Überwald"/>
+      <column name="role" value="corporal"/>
+    </insert>
+
   </changeSet>
 
 </databaseChangeLog>

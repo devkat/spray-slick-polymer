@@ -27,9 +27,9 @@ class FormValidation extends polymer.Base {
       this.handleValidationError(event, true));
 
     // Listen for changes in form controls
-    [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) =>
+    [].forEach.call(this.querySelectorAll('.control'), (elem: HTMLElement) =>
       elem.addEventListener('change', (e:Event) =>
-        this.validate(<PaperInput> e.target))
+        this.validate(<HTMLElement> e.target))
     );
 
   }
@@ -38,7 +38,7 @@ class FormValidation extends polymer.Base {
     return null;
   }
 
-  validate(control: PaperInput): void {
+  validate(control: HTMLElement): void {
     let name = control.name;
     let value = control.value;
 
@@ -47,7 +47,7 @@ class FormValidation extends polymer.Base {
   }
 
   handleValidationSuccess(): void {
-    [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) => {
+    [].forEach.call(this.querySelectorAll('.control'), (elem: HTMLElement) => {
       elem.errorMessage = null;
       elem.invalid = false;
     });
@@ -69,7 +69,7 @@ class FormValidation extends polymer.Base {
   }
 
   showValidation(result: ValidationResult, submitted: boolean): void {
-    [].forEach.call(this.querySelectorAll('.control'), (elem: PaperInput) => {
+    [].forEach.call(this.querySelectorAll('.control'), (elem: HTMLElement) => {
       // Don't show validation if field wasn't filled in yet
       if (submitted || elem.value !== undefined) {
         let errors: string[] = result[elem.name];

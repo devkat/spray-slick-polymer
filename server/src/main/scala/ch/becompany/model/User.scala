@@ -10,7 +10,8 @@ case class User(
   id: Option[Long],
   email: String,
   givenName: String,
-  familyName: String
+  familyName: String,
+  role: Role
 )
 
 object UserValidator extends Validator[User] {

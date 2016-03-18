@@ -1,7 +1,7 @@
 package ch.becompany.rest
 
 import akka.actor.{ActorContext, Actor}
-import ch.becompany.db.Users
+import ch.becompany.db.{Roles, Users}
 import ch.becompany.model.{UserValidator, User}
 import ch.becompany.json.UserJsonProtocol
 import spray.http.StatusCodes
@@ -65,6 +65,11 @@ trait UserService extends HttpService with ValidationDirectives {
                 user
               }
           }
+        }
+      } ~
+      path("roles") {
+        get {
+          complete(Roles.list())
         }
       }
     } ~

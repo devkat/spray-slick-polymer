@@ -2,6 +2,8 @@
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../common/form-validation.html">
 <link rel="import" href="../common/loader-overlay.html">
 
@@ -21,12 +23,20 @@
 
     <iron-ajax id="userDetailsService" url="/api/users/[[userId]]" last-response="{{user}}"></iron-ajax>
     <iron-ajax id="userValidationService" url="/api/users/validate"></iron-ajax>
+    <iron-ajax id="rolesService" url="/api/roles" last-response="{{roles}}" auto></iron-ajax>
 
     <p>* Required elements</p>
     <form is="iron-form" id="userForm" method="post" action="/api/users">
       <paper-input class="control" name="email" label="E-mail *" value="[[user.email]]"></paper-input>
       <paper-input class="control" name="givenName" label="Given name *" value="[[user.givenName]]"></paper-input>
       <paper-input class="control" name="familyName" label="Family name *" value="[[user.familyName]]"></paper-input>
+      <paper-dropdown-menu name="role" label="Role">
+        <paper-menu id="roleSelect" selected="{{user.role}}" attr-for-selected="value" class="dropdown-content">
+          <template is="dom-repeat" items="[[roles]]">
+            <paper-item value="[[item]]">[[item]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
       <div class="submit-buttons">
         <paper-button raised on-click="submitHandler">Submit</paper-button>
       </div>
