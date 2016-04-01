@@ -2,12 +2,21 @@
 
 Example project with Spray + Slick + Polymer.
 
+## Install
+
+Run the DB migrations:
+
+    cd server
+    sbt
+    > liquibase-update
+
 ## Run
 
 Server:
 
     cd server
-    sbt re-start
+    sbt
+    > re-start
 
 Client:
 
