@@ -24,7 +24,10 @@ class UserForm extends polymer.Base implements FormValidation {
 
   _userIdChanged(): void {
     //this.user = this._emptyUser;
-    this._form().reset();
+
+    // Disabled due to https://github.com/PolymerElements/paper-dropdown-menu/issues/114
+    //this._form().reset();
+
     [].forEach.call(this.querySelectorAll('.control'), (elem: HTMLElement) =>
       elem.invalid = false
     );
