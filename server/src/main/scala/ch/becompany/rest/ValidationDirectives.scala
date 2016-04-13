@@ -26,16 +26,15 @@ trait ValidationDirectives extends Directives {
   import JsValueJsonProtocol._
 
   def validateEntity[T:Validator](d: Directive1[T])(implicit ec: ExecutionContext): Directive1[T] =
-    d flatMap {
-      case t =>
-        val validator = implicitly[Validator[T]]
-        onComplete(validator.validate(t)) flatMap {
-          case Success(result) =>
-            if (result.isEmpty) provide(t)
-            else reject(ValidateRejection(result))
-          case Failure(ex) => complete(StatusCodes.InternalServerError,
-            s"An error occurred: ${ex.getMessage}")
-        }
+    d flatMap { t =>
+      val validator = implicitly[Validator[T]]
+      onComplete(validator.validate(t)) flatMap {
+        case Success(result) =>
+          if (result.isEmpty) provide(t)
+          else reject(ValidateRejection(result))
+        case Failure(ex) => complete(StatusCodes.InternalServerError,
+          s"An error occurred: ${ex.getMessage}")
+      }
     }
 
   implicit def validateRejectionHandler = RejectionHandler {
